@@ -10,5 +10,5 @@ thread_local!(static MATCHES: Result<Vec<init::Match>,Box<dyn StdError>>= init::
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![routes::get_teams::route,routes::get_match::route])
+    rocket::build().mount("/", routes![routes::get_teams::route,routes::get_match::route,routes::get_matches::route])
 }
