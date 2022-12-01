@@ -1,7 +1,6 @@
 use rocket::serde::json::Value;
 use std::error::Error;
 use rocket::serde::json::json;
-
 use crate::MATCHES;
 use crate::init::Match;
 

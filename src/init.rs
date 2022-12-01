@@ -1,24 +1,39 @@
 use serde::{Deserialize,Serialize};
 use std::error::Error;
-use csv::{ReaderBuilder};
+use csv::ReaderBuilder;
+use strum_macros::EnumIter;
 
 
-#[derive(Deserialize,PartialEq)]
+#[derive(Deserialize,PartialEq,EnumIter)]
 #[serde(crate = "rocket::serde")]
 pub enum SortType{
-    //byDate,
-    byTeam
+    ByDate,
+    ByTeam
 }
 
 impl TryFrom<u32> for SortType {
     type Error = ();
 
     fn try_from(value: u32) -> Result<Self, Self::Error> {
-        //if value == 0 {
-        //    return Ok(SortType::byDate)
-        //}
+        if value == 0 {
+            return Ok(SortType::ByDate)
+        }
         if value == 1 {
-            return Ok(SortType::byTeam)
+            return Ok(SortType::ByTeam)
+        } 
+        Err(())
+    }
+}
+
+impl TryFrom<SortType> for String {
+    type Error = ();
+
+    fn try_from(value: SortType) -> Result<Self, Self::Error> {
+        if value == SortType::ByDate {
+            return Ok("ByDate".to_string())
+        }
+        if value == SortType::ByTeam {
+            return Ok("ByTeam".to_string())
         } 
         Err(())
     }
@@ -100,7 +115,6 @@ pub fn init() -> Result<Vec<Match>,Box<dyn Error>>{
     for record in rdr.deserialize(){
         let mut record: Match = record?;
         record.id = index;
-        //println!("data: {}, {} vs {}\n",record.match_date,record.team_1,record.team_2);
         matches.push(record);
         index+=1
     }

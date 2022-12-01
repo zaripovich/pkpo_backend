@@ -1,4 +1,4 @@
-use rocket::serde::{Deserialize};
+use rocket::serde::Deserialize;
 use rocket::serde::json::{json,Json,Value};
 use crate::MATCHES;
 use std::error::Error;
@@ -6,12 +6,15 @@ use crate::init::SortType;
 use crate::init::Match;
 
 
-#[derive(Deserialize,FromForm)]
+#[derive(Deserialize)]
 #[serde(crate = "rocket::serde")]
 pub struct SearchParameters {
     pub count: u32,
     pub offset: u32,
     pub sort_type:u32,
+    #[serde(default)]
+    pub both_team:bool,
+    #[serde(default)]
     pub teams_for_sort:Vec<String>
 }
 
@@ -25,8 +28,25 @@ pub fn sort_and_get_matches(mut matches: Vec<Match>,parameters: Json<SearchParam
         matches.remove(0);
     }
     match parameters.sort_type.try_into(){
-        //Ok(SortType::byDate) => matches.sort_by_key(|m| m.match_date),
-        Ok(SortType::byTeam) => matches.sort_by_key(|m| parameters.teams_for_sort.contains(&m.team_1) || parameters.teams_for_sort.contains(&m.team_2) ),
+        Ok(SortType::ByDate) => matches.sort_by_key(|m| m.match_date.clone()),
+        Ok(SortType::ByTeam) => {
+            let mut indexes = Vec::<usize>::new();
+            for (index,element) in matches.iter().enumerate(){
+                if parameters.both_team == false {
+                    if !!!(parameters.teams_for_sort.contains(&element.team_1) || parameters.teams_for_sort.contains(&element.team_2)){
+                        indexes.push(index);
+                    }
+                }else{
+                    if !!!(parameters.teams_for_sort.contains(&element.team_1) && parameters.teams_for_sort.contains(&element.team_2)){
+                        indexes.push(index);
+                    }
+                }
+            }
+            for (offset,index) in indexes.iter().enumerate(){
+                matches.remove(index.clone()-offset);
+            }
+            matches.sort_by_key(|m| m.match_date.clone())
+        },
         Err(_) => (),
     }
     let mut result = Vec::<Match>::new();
