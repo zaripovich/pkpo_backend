@@ -8,7 +8,8 @@ use strum_macros::EnumIter;
 #[serde(crate = "rocket::serde")]
 pub enum SortType{
     ByDate,
-    ByTeam
+    ByTeam,
+    ById
 }
 
 impl TryFrom<u32> for SortType {
@@ -20,6 +21,9 @@ impl TryFrom<u32> for SortType {
         }
         if value == 1 {
             return Ok(SortType::ByTeam)
+        } 
+        if value == 2 {
+            return Ok(SortType::ById)
         } 
         Err(())
     }
@@ -34,6 +38,9 @@ impl TryFrom<SortType> for String {
         }
         if value == SortType::ByTeam {
             return Ok("ByTeam".to_string())
+        }
+        if value == SortType::ById {
+            return Ok("ById".to_string())
         } 
         Err(())
     }

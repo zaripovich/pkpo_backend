@@ -47,7 +47,8 @@ pub fn sort_and_get_matches(mut matches: Vec<Match>,parameters: Json<SearchParam
             }
             matches.sort_by_key(|m| m.match_date.clone())
         },
-        Err(_) => (),
+        Ok(SortType::ById) => matches.sort_by_key(|m| m.id),
+        Err(_) => matches.clear(),
     }
     let mut result = Vec::<Match>::new();
     for (index,element) in matches.iter().enumerate(){
