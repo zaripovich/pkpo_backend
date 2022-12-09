@@ -1,23 +1,16 @@
-use rocket::serde::json::Value;
-use std::error::Error;
-use rocket::serde::json::json;
-use crate::MATCHES;
-use crate::init::Match;
+
+use rocket::serde::json::{json,Value};
+use crate::database::module;
 
 
 #[get("/getMatch/<id>")]
-pub fn route(id:usize) -> Value {
-    MATCHES.with(|matches| {
-        let result: Result<&Match,Box<dyn Error>> = match matches{
-            Ok(result)=> Ok(result.get(id).unwrap()),
-            Err(why) => Err(From::from(why.to_string())),
-        };
-        match result{
-            Ok(ok)=> {
-                let value = rocket::serde::json::to_value(&ok);
-                json!({ "status": "ok", "match": value.unwrap()})
-            },
-            Err(error) => json!({"status": "error", "description": error.to_string()}),
-        }
-    })
+pub async fn route(conn: module::DataBase,id:i32) -> Value {
+  let result = conn.run(move |c| module::get_match(c,id)).await;
+  match result{
+    Ok(ok)=> {
+        let value = rocket::serde::json::to_value(ok);
+        json!({ "status": "ok", "match": value.unwrap()})
+    },
+    Err(error) => json!({"status": "error", "description": error.to_string()}),
+  }
 }

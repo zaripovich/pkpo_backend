@@ -1,0 +1,4 @@
+
+
+[global.databases.pkpodb]
+url = "postgresql://zaripovsky:zaripovichebet13@localhost/pkpodb"
