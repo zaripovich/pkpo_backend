@@ -49,6 +49,7 @@ impl TryFrom<SortType> for String {
 
 #[derive(Debug, Deserialize,Serialize,Clone)]
 pub struct Match{
+  pub id: i32,
   pub match_date: String,
   pub team_1: String,
   pub team_2: String,
@@ -226,8 +227,9 @@ impl Match{
     return params;
   }
 
-  pub fn preview(_match_date: String, _team_1: String, _team_2: String,_t1_points:i32,_t2_points:i32, _winner: String)-> Match{
+  pub fn preview(_id:i32,_match_date: String, _team_1: String, _team_2: String,_t1_points:i32,_t2_points:i32, _winner: String)-> Match{
     Match { 
+      id: _id,
       match_date: _match_date,
       team_1: _team_1,
       team_2: _team_2,

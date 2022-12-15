@@ -1,7 +1,6 @@
 
 use rocket::serde::Deserialize;
 use rocket::serde::json::{json,Json,Value};
-//use crate::DB;
 use crate::models::SortType;
 use crate::database::module;
 

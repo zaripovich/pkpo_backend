@@ -131,7 +131,7 @@ pub fn get_matches_preview(client: &mut postgres::Client,count:i64,offset:i64,so
   let mut params = Vec::<&(dyn postgres::types::ToSql + Sync)>::new();
   let teams = teams_for_sort.unwrap_or([].to_vec());
   match sort_by {
-    SortType::ByDate => sort_params.push_str("ORDER BY match_date"),
+    SortType::ByDate => sort_params.push_str("ORDER BY match_date DESC"),
     SortType::ByTeam => {
       match both_team{
         Some(v) => {
@@ -147,11 +147,11 @@ pub fn get_matches_preview(client: &mut postgres::Client,count:i64,offset:i64,so
       }
       params.push(&teams);
       params.push(&teams);
-      sort_params.push_str(" ORDER BY match_date")
+      sort_params.push_str(" ORDER BY match_date DESC")
     },
-    SortType::ById => sort_params.push_str("ORDER BY ID")
+    SortType::ById => sort_params.push_str("ORDER BY ID ")
   }
-  let mut query = String::from(format!("SELECT match_date, team_1, team_2, t1_points, t2_points , winner FROM pkpo.matches {} ",sort_params));
+  let mut query = String::from(format!("SELECT ID,match_date, team_1, team_2, t1_points, t2_points , winner FROM pkpo.matches {} ",sort_params));
   if params.len()==2{
     query.push_str("LIMIT $3 OFFSET $4;");
   }else{
@@ -166,7 +166,8 @@ pub fn get_matches_preview(client: &mut postgres::Client,count:i64,offset:i64,so
       row.get(2),
       row.get(3),
       row.get(4),
-      row.get(5)
+      row.get(5),
+      row.get(6)
     );
     matches.push(_match);
   }
@@ -175,7 +176,8 @@ pub fn get_matches_preview(client: &mut postgres::Client,count:i64,offset:i64,so
 
 pub fn get_match(client: &mut postgres::Client,id:i32)->Result<Match,postgres::Error>{
   let row = client.query("SELECT * FROM pkpo.matches WHERE ID=$1 ORDER BY match_date LIMIT 1;",&[&id])?;
-  Ok(Match {  match_date:         row[0].get(1), 
+  Ok(Match {id:                 row[0].get(0),  
+            match_date:         row[0].get(1), 
             team_1:             row[0].get(2), 
             team_2:             row[0].get(3),
             t1_points:          row[0].get(4), 

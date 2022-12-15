@@ -1,7 +1,6 @@
 
 use rocket::serde::json::{json,Value};
 use crate::database::module;
-//use crate::DB;
 
 #[get("/getTeams")]
 pub async fn route(conn: module::DataBase) -> Value {

@@ -1,4 +1,4 @@
-use crate::models::{Match};
+use crate::models::Match;
 use std::error::Error;
 use csv::ReaderBuilder;
 
