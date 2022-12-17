@@ -46,7 +46,7 @@ impl Fairing for Cors {
 
 #[get("/init")]
 async fn db_start(conn: database::module::DataBase) -> Value{
-  let result = conn.run(move |c| database::module::init(c)).await;
+  let result = conn.run(move |c| database::module::DataProcessor::init(c)).await;
   match result {
       Ok(_) => json!({ "status": "ok"}),
       Err(err) => json!({ "status": "error", "description": err})

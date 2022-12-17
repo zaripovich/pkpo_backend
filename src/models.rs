@@ -49,6 +49,7 @@ impl TryFrom<SortType> for String {
 
 #[derive(Debug, Deserialize,Serialize,Clone)]
 pub struct Match{
+  #[serde(skip_deserializing)]
   pub id: i32,
   pub match_date: String,
   pub team_1: String,
